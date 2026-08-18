@@ -1,0 +1,10 @@
+{
+  "country": "Country name",
+  "dish": "Dish name",
+  "date": "2026-08-22",
+  "rating": 8.5,
+  "difficulty": 3,
+  "would_make_again": "Yes",
+  "notes": "Your notes here.",
+  "photo": "photos/example.jpg"
+}

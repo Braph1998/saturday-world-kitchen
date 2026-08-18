@@ -1,0 +1,62 @@
+[
+  {
+    "country": "Georgia",
+    "dish": "Khinkali",
+    "date": "2026-08-29",
+    "rating": 9.3,
+    "difficulty": 3,
+    "would_make_again": "Absolutely",
+    "notes": "Getting the folds right took some practice. Filling was excellent; next time I would add even more black pepper.",
+    "photo": ""
+  },
+  {
+    "country": "Senegal",
+    "dish": "Thieboudienne",
+    "date": "2026-09-05",
+    "rating": 8.8,
+    "difficulty": 4,
+    "would_make_again": "Yes",
+    "notes": "A proper weekend project, but the deeply seasoned rice and vegetables made it worth the effort.",
+    "photo": ""
+  },
+  {
+    "country": "Peru",
+    "dish": "Lomo saltado",
+    "date": "2026-09-12",
+    "rating": 9.0,
+    "difficulty": 2,
+    "would_make_again": "Definitely",
+    "notes": "Loved the soy-vinegar sauce and the combination of stir-fried beef with fries.",
+    "photo": ""
+  },
+  {
+    "country": "Iran",
+    "dish": "Fesenjan",
+    "date": "2026-09-19",
+    "rating": 9.6,
+    "difficulty": 3,
+    "would_make_again": "Yes — favourite so far",
+    "notes": "Rich walnut sauce with pomegranate was unlike anything else in the project.",
+    "photo": ""
+  },
+  {
+    "country": "Sri Lanka",
+    "dish": "Kottu roti",
+    "date": "2026-09-26",
+    "rating": 8.9,
+    "difficulty": 3,
+    "would_make_again": "Yes",
+    "notes": "Fantastic texture and a great way to use flatbread.",
+    "photo": ""
+  },
+  {
+    "country": "El Salvador",
+    "dish": "Pupusas",
+    "date": "2026-10-03",
+    "rating": 9.1,
+    "difficulty": 3,
+    "would_make_again": "Definitely",
+    "notes": "The curtido made the whole dish. Shaping became much easier after the first two.",
+    "photo": ""
+  }
+]

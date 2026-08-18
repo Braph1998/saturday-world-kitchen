@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Saturday World Kitchen</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f4ef;
+      --panel: #ffffff;
+      --text: #1f2933;
+      --muted: #68717d;
+      --border: #d6d8dc;
+      --accent: #8b4a32;
+      --accent-soft: #efe2db;
+      --uncooked: #e3e5e7;
+      --shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #151515;
+        --panel: #202020;
+        --text: #f4f4f4;
+        --muted: #a7abb0;
+        --border: #3a3a3a;
+        --accent: #d58c70;
+        --accent-soft: #3a2923;
+        --uncooked: #303236;
+        --shadow: 0 10px 30px rgba(0,0,0,.25);
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 56px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 24px;
+    }
+    h1 { margin: 0 0 6px; font-size: clamp(2rem, 5vw, 3.6rem); line-height: 1; }
+    h2, h3 { margin: 0; }
+    p { line-height: 1.55; }
+    .sub { color: var(--muted); margin: 0; }
+    button {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      padding: 11px 14px;
+      border-radius: 12px;
+      font: inherit;
+      cursor: pointer;
+    }
+    button:hover { border-color: var(--accent); }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+    .stat .k { color: var(--muted); font-size: .9rem; }
+    .stat .v { font-size: 1.65rem; font-weight: 700; margin-top: 4px; }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.7fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    #map {
+      width: 100%;
+      height: auto;
+      display: block;
+      margin-top: 12px;
+    }
+    .country {
+      stroke: var(--panel);
+      stroke-width: .6;
+      transition: opacity .15s ease, stroke-width .15s ease;
+    }
+    .country.cooked { cursor: pointer; }
+    .country.cooked:hover { opacity: .75; stroke-width: 1.2; }
+    .legend { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 10px; color: var(--muted); font-size: .9rem; }
+    .dot { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+    #detailsEmpty { color: var(--muted); }
+    .entry { border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px; }
+    .entry:first-of-type { border-top: 0; padding-top: 0; margin-top: 0; }
+    .dish-photo {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      margin: 12px 0;
+      background: var(--accent-soft);
+    }
+    .photo-placeholder {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px dashed var(--border);
+      background: var(--accent-soft);
+      color: var(--muted);
+      margin: 12px 0;
+    }
+    .meta { color: var(--muted); font-size: .92rem; margin-top: 3px; }
+    .rating { color: var(--accent); font-weight: 700; }
+    .pill {
+      display: inline-block;
+      background: var(--accent-soft);
+      padding: 5px 9px;
+      border-radius: 999px;
+      margin: 4px 6px 0 0;
+      font-size: .88rem;
+    }
+    .random {
+      margin-top: 14px;
+      background: var(--accent-soft);
+      border-radius: 14px;
+      padding: 14px;
+      display: none;
+    }
+    .topline { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px; }
+    .small { font-size:.9rem; color:var(--muted); }
+    .error { color: #b42318; }
+    @media (max-width: 800px) {
+      .stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .grid { grid-template-columns: 1fr; }
+      header { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div>
+        <h1>Saturday World Kitchen</h1>
+        <p class="sub">One country, one Saturday, one dish worth remembering.</p>
+      </div>
+      <button id="randomBtn" type="button">🎲 Pick my next country</button>
+    </header>
+
+    <section class="stats">
+      <div class="stat"><div class="k">Countries cooked</div><div class="v" id="countryCount">—</div></div>
+      <div class="stat"><div class="k">Dishes logged</div><div class="v" id="dishCount">—</div></div>
+      <div class="stat"><div class="k">Average rating</div><div class="v" id="averageRating">—</div></div>
+      <div class="stat"><div class="k">Favourite so far</div><div class="v" id="favouriteDish" style="font-size:1.2rem">—</div></div>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <div class="topline">
+          <div>
+            <h2>World map</h2>
+            <div class="small">Click a highlighted country to open its journal.</div>
+          </div>
+          <div id="progress" class="small"></div>
+        </div>
+        <div id="status" class="small">Loading map…</div>
+        <svg id="map" viewBox="0 0 960 500" role="img" aria-label="Interactive world map"></svg>
+        <div class="legend">
+          <span><span class="dot" style="background:var(--accent)"></span>Cooked</span>
+          <span><span class="dot" style="background:var(--uncooked)"></span>Not yet</span>
+        </div>
+        <div class="random" id="randomPanel">
+          <div class="small">Suggested next country</div>
+          <strong id="randomCountry"></strong>
+        </div>
+      </div>
+
+      <aside class="card" id="details">
+        <div id="detailsEmpty">
+          <h2>Country journal</h2>
+          <p>Select one of the highlighted countries on the map. Your dish photo, rating, date and notes will appear here.</p>
+        </div>
+        <div id="detailsContent" hidden></div>
+      </aside>
+    </section>
+  </main>
+
+  <script type="module">
+    import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
+    import { feature } from "https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/+esm";
+    import world from "https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json/+esm";
+
+    const totalCountries = 195;
+    const aliases = new Map([
+      ["Iran, Islamic Rep.", "Iran"],
+      ["Russian Federation", "Russia"],
+      ["Korea, Rep.", "South Korea"],
+      ["Korea, Dem. People's Rep.", "North Korea"],
+      ["Viet Nam", "Vietnam"],
+      ["Syrian Arab Republic", "Syria"],
+      ["Lao PDR", "Laos"],
+      ["Türkiye", "Turkey"],
+      ["Czechia", "Czech Republic"],
+      ["Côte d'Ivoire", "Ivory Coast"],
+      ["United States of America", "United States"]
+    ]);
+
+    const candidateCountries = [
+      "Armenia","Azerbaijan","Bhutan","Bolivia","Botswana","Cambodia","Cameroon","Chile","Colombia","Ethiopia",
+      "Ghana","Hungary","Indonesia","Jordan","Kazakhstan","Laos","Lebanon","Malaysia","Mauritius","Mexico","Morocco",
+      "Nepal","Nigeria","Pakistan","Philippines","Romania","Rwanda","Serbia","South Africa","South Korea","Thailand",
+      "Trinidad and Tobago","Tunisia","Turkey","Uzbekistan","Vietnam"
+    ];
+
+    const response = await fetch("./dishes.json");
+    const dishes = await response.json();
+
+    const byCountry = d3.group(dishes, d => d.country);
+    const countriesCooked = [...byCountry.keys()];
+    const favourite = [...dishes].sort((a,b) => b.rating - a.rating)[0];
+    const avg = dishes.length ? dishes.reduce((sum,d)=>sum+d.rating,0)/dishes.length : 0;
+
+    document.querySelector("#countryCount").textContent = countriesCooked.length;
+    document.querySelector("#dishCount").textContent = dishes.length;
+    document.querySelector("#averageRating").textContent = dishes.length ? avg.toFixed(1) + "/10" : "—";
+    document.querySelector("#favouriteDish").textContent = favourite ? favourite.dish : "—";
+    document.querySelector("#progress").textContent = `${countriesCooked.length} / ${totalCountries}`;
+
+    const fc = feature(world, world.objects.countries);
+    const width = 960, height = 500;
+    const projection = d3.geoNaturalEarth1().fitExtent([[8,8],[width-8,height-8]], fc);
+    const path = d3.geoPath(projection);
+    const svg = d3.select("#map");
+
+    function normalize(name) {
+      return aliases.get(name) || name;
+    }
+
+    svg.selectAll("path")
+      .data(fc.features)
+      .join("path")
+      .attr("class", d => byCountry.has(normalize(d.properties.name)) ? "country cooked" : "country")
+      .attr("d", path)
+      .attr("fill", d => byCountry.has(normalize(d.properties.name)) ? "var(--accent)" : "var(--uncooked)")
+      .on("click", (_, d) => {
+        const country = normalize(d.properties.name);
+        if (byCountry.has(country)) showCountry(country);
+      });
+
+    document.querySelector("#status").remove();
+
+    function stars(n) {
+      return "★".repeat(n) + "☆".repeat(Math.max(0, 5-n));
+    }
+
+    function niceDate(iso) {
+      if (!iso) return "";
+      const d = new Date(iso + "T12:00:00");
+      return new Intl.DateTimeFormat(undefined, {year:"numeric", month:"long", day:"numeric"}).format(d);
+    }
+
+    function escapeHtml(s="") {
+      return String(s).replace(/[&<>"']/g, ch => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[ch]));
+    }
+
+    function showCountry(country) {
+      const entries = byCountry.get(country) || [];
+      const body = entries.map(entry => {
+        const photo = entry.photo
+          ? `<img class="dish-photo" src="${escapeHtml(entry.photo)}" alt="${escapeHtml(entry.dish)}">`
+          : `<div class="photo-placeholder">📸 Add a photo by putting an image in <code>photos/</code> and setting the filename in <code>dishes.json</code>.</div>`;
+        return `
+          <article class="entry">
+            <h3>${escapeHtml(entry.dish)}</h3>
+            <div class="meta">${escapeHtml(niceDate(entry.date))}</div>
+            ${photo}
+            <div class="rating">${Number(entry.rating).toFixed(1)} / 10</div>
+            <div>
+              <span class="pill">Difficulty ${stars(Number(entry.difficulty || 0))}</span>
+              <span class="pill">Make again: ${escapeHtml(entry.would_make_again || "—")}</span>
+            </div>
+            <p>${escapeHtml(entry.notes || "")}</p>
+          </article>
+        `;
+      }).join("");
+
+      document.querySelector("#detailsEmpty").hidden = true;
+      const content = document.querySelector("#detailsContent");
+      content.hidden = false;
+      content.innerHTML = `<h2>${escapeHtml(country)}</h2><div class="small">${entries.length} dish${entries.length === 1 ? "" : "es"} logged</div>${body}`;
+    }
+
+    document.querySelector("#randomBtn").addEventListener("click", () => {
+      const remaining = candidateCountries.filter(c => !byCountry.has(c));
+      const pool = remaining.length ? remaining : candidateCountries;
+      const pick = pool[Math.floor(Math.random() * pool.length)];
+      document.querySelector("#randomCountry").textContent = pick;
+      document.querySelector("#randomPanel").style.display = "block";
+    });
+  </script>
+</body>
+</html>

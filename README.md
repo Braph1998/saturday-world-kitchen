@@ -1,4 +1,4 @@
-# Saturday World Kitchen
+# World Kitchen Tour
 
 A small static website for tracking a cooking project by country.
 

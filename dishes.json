@@ -8,5 +8,15 @@
     "would_make_again": "Absolutely",
     "notes": "Getting the folds right took some practice. Filling was excellent; next time I would add even more black pepper.",
     "photo": ""
-  }
+  },
+  {
+  "country": "Italy",
+  "dish": "Lasagna",
+  "date": "2026-08-22",
+  "rating": 10,
+  "difficulty": 2.5,
+  "would_make_again": "Yes",
+  "notes": "Delicious, obviously",
+  "photo": "photos/lasagna.jpg"
+}
 ]
